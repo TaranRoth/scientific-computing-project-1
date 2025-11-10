@@ -14,16 +14,25 @@ popdata = [34.4 38.6 37.9 12.3;
 times = 1930:10:2020;
 clf
 hold on
-plot(times,popdata,'Marker','v')
-legend("Northeast","Midwest","South","West","Location","northwest")
 
+%legend("Northeast","Midwest","South","West","Location","northwest")
+location_arr=["Northeast","Midwest","South","West"];
 rarch = zeros(1,4);
+plotarch = zeros(1,4);
 for j=1:4
     b=popdata(:,j);
     costfixed = @(r) cost(r, b);
-    r = fminsearch(costfixed, 0);
+    r = fminsearch(costfixed, .5);
     rarch(j) = r;
+    xvals=linspace(1930,2020,500);
+    base_year=1930;
+    base_val = b(1);
+    p1 = plot(xvals, arrayfun(@(x) (1+r)^((x - base_year)/10)*base_val, xvals));
+    set(gca,'ColorOrderIndex',j)
+    p2 = plot(times,b,'Marker','v');
+    legend([p1(1,:),p2(2,:)], location_arr(j))
 end
+legend("Northeast","Midwest","South","West","Location","northwest")
 hold off
 
 function y=cost(r, col)
