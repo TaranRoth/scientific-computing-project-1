@@ -22,32 +22,53 @@ hold on
 % positive,negatve, or 0
 location_arr=["Northeast","Midwest","South","West"];
 plotarch = zeros(1,4);
+r_matrix = zeros(4,4);
 for j=1:4
     costfixed = @(v) cost(v, popdata, j);
-    v = fminsearch(costfixed, [0;0;0;0]);
-    xvals=linspace(1930,2020,500);
-    p1 = plot(xvals, arrayfun(@(x) model(x, v, 1930, 2020, popdata), xvals),"DisplayName", location_arr(j));
-    set(gca,'ColorOrderIndex',j)
-    p2 = plot(times,b,'Marker','v');
-    set(get(get(p2,'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); 
+    v = fminsearch(costfixed, [0;0;0;]);
+    %xvals=linspace(1930,2020,500);
+    %p1 = plot(xvals, arrayfun(@(x) model(x, v, 1930, 2020, popdata), xvals),"DisplayName", location_arr(j));
+    %set(gca,'ColorOrderIndex',j)
+    %p2 = plot(times,b,'Marker','v');
+    %set(get(get(p2,'Annotation'),'LegendInformation'),'IconDisplayStyle','off'); 
+    result_vector = zeros(4,1);
+    if j == 1
+        result_vector = [v(1);0;v(2);v(3);];
+    elseif j == 2
+        result_vector = [0;v(1);v(2);v(3)];
+    elseif j == 3
+        result_vector = [v(1);v(2);v(3);0];
+    elseif j == 4
+        result_vector = [v(1);v(2);0;v(3)];
+    end
+    r_matrix(:,j) = result_vector;
 end
-legend("Location", "northwest")
-legend show
+%legend("Location", "northwest")
+%legend show
 hold off
 
 % v = [northeast;midwest;south;west] coefficients, j represents the column
 % we are currently interested in
 function y=cost(v, popdata, j)
+    col_indices=zeros(1,3);
+    if j  == 1
+        col_indices = [1,3,4];
+    elseif j == 2
+        col_indices = [2,3,4];
+    elseif j == 3
+        col_indices = [1,2,3];
+    elseif j == 4
+        col_indices = [1,2,4];
+    end
     col=popdata(:,j);
     sum = 0;
     for i=1:length(col)-1
-        sum = sum + (popdata(i,:)*v - col(i + 1))^2;
+        sum = sum + (popdata(i,col_indices)*v - col(i + 1))^2;
     end
     y=sum;
 end
 
-function y=model(x, v, start, end, popdata)
-    base=popdata(1,:);
-    exponent = (x-start) / 10;
-    y=
-end
+%function y=model(x, v, start, end, popdata)
+    %base=popdata(1,:);
+    %exponent = (x-start) / 10;
+%end
