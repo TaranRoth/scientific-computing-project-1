@@ -12,5 +12,37 @@ popdata = [34.4 38.6 37.9 12.3;
     57.6 69.0 126.3 78.6
     ];
 times = 1930:10:2020;
+
+
+costfixed = @(v) cost(v, popdata);
+rate_guess = 0.01;
+[r,final_error]=fminsearch(costfixed, ([1,1,1,1,rate_guess,rate_guess,rate_guess,rate_guess])');
 clf
 hold on
+plot(times,popdata,'Marker','v')
+plot(times, get_model(r,popdata), 'Marker', 'v')
+legend("Northeast","Midwest","South","West","Location","northwest")
+
+hold off
+
+function y=cost(v, popdata)
+    popmodel=get_model(v, popdata);
+    y=norm(popmodel - popdata, 'fro');
+
+end
+
+function y=get_model(v,popdata)
+    A = [
+        (v(1) + 1) 0 -v(8) -v(7)
+        0 (v(2) + 1) -v(6) -v(5)
+        v(5) v(6) (v(3) + 1) 0
+        v(7) v(8) 0 (v(4) + 1)
+        ];
+
+    popmodel = zeros(10,4);
+    popmodel(1,:) = popdata(1,:);
+    for i=2:length(popdata) 
+        popmodel(i,:) = (A * popmodel(i-1,:)')';
+    end
+    y=popmodel;
+end
