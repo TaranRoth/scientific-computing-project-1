@@ -15,9 +15,10 @@ times = 1930:10:2020;
 
 
 costfixed = @(v) cost(v, popdata);
-[r,final_error]=fminsearch(costfixed, ([1.05,1.06,1.14,1.17, ...
+options=optimset("MaxFunEvals", 10^(5),"MaxIter",10^(5));
+[r,final_error]=fmincon(costfixed, ([1.05,1.06,1.14,1.17, ...
     .01,.01,.01,.01, ...
-    60,70,130,80])');
+    100,100,100,100])',[],[],[],[],zeros(12,1),[],[],options);
 clf
 hold on
 location_arr=["Northeast","Midwest","South","West"];
@@ -34,7 +35,7 @@ hold off
 
 function y=cost(v, popdata)
     popmodel=get_model(v, popdata);
-    y=norm(popmodel - popdata, 'fro');
+    y=norm(popmodel - popdata, 'fro') / sqrt(40);
 
 end
 
@@ -55,7 +56,7 @@ function y=get_model(v,popdata)
     popmodel = zeros(10,4);
     popmodel(1,:) = popdata(1,:);
     for i=2:length(popdata) 
-        popmodel(i,:) = (A * popmodel(i-1,:)' - (A*(popmodel(i-1,:))'.^2)./v(9:12))';
+        popmodel(i,:) = (A * popmodel(i-1,:)' - (v(1:4).*(popmodel(i-1,:))'.^2)./v(9:12))';
     end
     y=popmodel;
 end
