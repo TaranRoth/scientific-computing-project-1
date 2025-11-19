@@ -18,7 +18,9 @@ costfixed = @(v) cost(v, popdata);
 options=optimset("MaxFunEvals", 10^(5),"MaxIter",10^(5));
 [r,final_error]=fmincon(costfixed, ([1.05,1.06,1.14,1.17, ...
     .01,.01,.01,.01, ...
-    100,100,100,100])',[],[],[],[],zeros(12,1),[],[],options);
+    100,100,100,100])',[],[],[],[],zeros(12,1), ...
+    [] ...
+    ,[],options);
 clf
 hold on
 location_arr=["Northeast","Midwest","South","West"];
@@ -40,18 +42,18 @@ function y=cost(v, popdata)
 end
 
 function y=get_model(v,popdata)
-    A = [
-        (v(1) + 1 - v(5) - v(7)) 0 0 0
-        0 (v(2) + 1 - v(6) - v(8)) 0 0
-        v(5) v(6) (v(3) + 1) 0
-        v(7) v(8) 0 (v(4) + 1)
-        ];
     % A = [
-    %     (v(1) + 1) 0 0 0
-    %     0 (v(2) + 1) 0 0
-    %     0 0 (v(3) + 1) 0
-    %     0 0 0 (v(4) + 1)
+    %     (v(1) + 1 - v(5) - v(7)) 0 0 0
+    %     0 (v(2) + 1 - v(6) - v(8)) 0 0
+    %     v(5) v(6) (v(3) + 1) 0
+    %     v(7) v(8) 0 (v(4) + 1)
     %     ];
+    A = [
+        (v(1) + 1 - v(6)) 0 0 0
+        0 (v(2) + 1 - v(7)) 0 0
+        0 v(6) (v(3) + 1) 0
+        v(7) 0 0 (v(4) + 1)
+        ];
 
     popmodel = zeros(10,4);
     popmodel(1,:) = popdata(1,:);
