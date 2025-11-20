@@ -43,12 +43,6 @@ function y=cost(v, popdata)
 end
 
 function y=get_model(v,popdata)
-    % A = [
-    %     (v(1) + 1 - v(5) - v(7)) 0 0 0
-    %     0 (v(2) + 1 - v(6) - v(8)) 0 0
-    %     v(5) v(6) (v(3) + 1) 0
-    %     v(7) v(8) 0 (v(4) + 1)
-    %     ];
     A = [
         (v(1) + 1 - v(6)) 0 0 0
         0 (v(2) + 1 - v(7)) 0 0
