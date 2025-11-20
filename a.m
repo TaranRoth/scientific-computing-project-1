@@ -34,6 +34,7 @@ for j=1:4
 end
 legend("Location", "northwest")
 legend show
+xlabel("Year"); ylabel("Population (Millions)"); title("Population vs. Year");
 hold off
 
 function y=cost(r, col)
